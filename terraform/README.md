@@ -22,6 +22,7 @@ and secrets. A NAS `apply` must not be able to touch Vault's state.
 | [`openbao/`](openbao/) | `hashicorp/vault` (OpenBao is API-compatible) | OpenBao **structure**: KV-v2 mount, AppRole auth, per-consumer policies (krg-deploy, krg-prod) | **built** |
 | [`grafana/`](grafana/) | `grafana/grafana` + `hashicorp/vault` | Grafana objects: data sources, folders, dashboards, SSO via Authentik (creds from OpenBao) | **built** |
 | [`temporal/`](temporal/) | `platacard/temporal` | Temporal **namespaces** on the krg-prod cluster; authenticates to the mTLS frontend with a `temporal-client` cert minted from the lab CA by the deploy script | **built** |
+| [`krg-router/`](krg-router/) | `terraform-routeros/routeros` | MikroTik CRS328 lab router (RouterOS 7 REST): interfaces, addressing, DHCP, NAT, ordered firewall built from `trusted.json`, management-plane hardening | **scaffolded** — not in `TOFU_TARGETS`; adopt per its README bring-up |
 
 > `authentik/`, `openbao/`, and `grafana/` manage the *configuration of* services
 > that are **deployed elsewhere** (Authentik + Grafana are compose stacks on

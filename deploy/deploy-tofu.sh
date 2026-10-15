@@ -240,6 +240,19 @@ materialize() { # <target>
       cp "${TF_DIR}/incus/krg-nat-server.crt" "${icdir}/servercerts/krg-nat.crt"
       export TF_VAR_incus_config_dir="$icdir"
       ;;
+    krg-router)
+      # MikroTik REST API. Password lives under secret/krg-deploy/* (already readable
+      # by the krg-deploy AppRole — no openbao policy change). Passed as a provider
+      # argument, so it never lands in state. The router's self-signed TLS cert is
+      # pinned in git (terraform/krg-router/router-server.crt, bring-up step 3).
+      [[ -n "${VAULT_TOKEN:-}" ]] || { echo "  no VAULT_TOKEN (AppRole) — skipping krg-router" >&2; return 1; }
+      if [[ ! -r "${TF_DIR}/krg-router/router-server.crt" ]]; then
+        echo "  missing terraform/krg-router/router-server.crt (pinned router cert) — skipping krg-router" >&2
+        return 1
+      fi
+      TF_VAR_routeros_password="$(_kv secret/krg-deploy/krg-router password)" || return 1
+      export TF_VAR_routeros_password
+      ;;
     *)
       echo "  no materialization rule for ${1} — skipping" >&2
       return 1
